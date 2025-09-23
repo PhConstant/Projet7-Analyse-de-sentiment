@@ -27,10 +27,17 @@ class FeedbackIn(BaseModel):
     right_answer: bool
 
 # Charger le modèle "Production" depuis le MLflow Model Registry (ou chemin local)
-client = MlflowClient(tracking_uri="http://localhost:8080")
-registered_model_name = client.get_registered_model('log_regression_model_opt').name
-MODEL_URI = f"models:/{registered_model_name}@champion"
-model = mlflow.sklearn.load_model(MODEL_URI)
+import tensorflow as tf
+import joblib
+MODEL_PATH = "exp_models/Best_BiLSTM_model"
+model = tf.keras.models.load_model(MODEL_PATH)
+tokenizer = joblib.load("exp_models/bilstm_tokenizer.pkl")
+
+
+# client = MlflowClient(tracking_uri="http://localhost:8080")
+# registered_model_name = client.get_registered_model('log_regression_model_opt').name
+# MODEL_URI = f"models:/{registered_model_name}@champion"
+# model = mlflow.sklearn.load_model(MODEL_URI)
 
 
 
@@ -42,17 +49,26 @@ def predict(inp: TweetIn):
     # Prétraitement du texte d'entrée
     print("Text input raw :")
     print(inp.text)
-    text = preprocess_text_simple(
-        text=inp.text, 
-        tokenizer=TweetTokenizer().tokenize,
-        stem_lem_func=WordNetLemmatizer().lemmatize
-        )
+    text_df = pd.DataFrame(data=[inp.text], columns=['text'])
+    text_clean = preprocess_data_embedding(X_raw=text_df, 
+                                                        stem_lem_func=None,
+                                                        tokenizer=tokenizer, 
+                                                        stop_words=None, 
+                                                        min_count=1, # mincount = 1 car on est sur le jeu de validation
+                                                        max_len = 50, 
+                                                        num_words=30000)
+
+    # text = preprocess_text_simple(
+    #     text=inp.text, 
+    #     tokenizer=TweetTokenizer().tokenize,
+    #     stem_lem_func=WordNetLemmatizer().lemmatize
+    #     )
     
-    print("Texte prétraité :", text)
+    print("Texte prétraité :", text_clean)
 
 
 
-    proba = float(model.predict_proba([text])[:, 1])  # adapter selon wrapper
+    proba = float(model.predict(text_clean)[0][0])  # adapter selon wrapper
     print(f"¨Probablilité calculées {round(proba,5)}")
 
     return PredOut(positive_proba=proba, positive=proba>=0.5)
