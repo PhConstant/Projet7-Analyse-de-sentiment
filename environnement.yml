@@ -1,0 +1,20 @@
+name: AI_env_P7
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - ipykernel
+  - numpy
+  - pandas
+  - seaborn
+  - nltk
+  - spacy
+  - gensim
+  - scikit-learn
+  - joblib
+  - pip
+  - pip:
+      - tensorflow==2.15.0
+      - mlflow
+      - optuna

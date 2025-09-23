@@ -1,0 +1,27 @@
+name: AI_env_P7_gpu
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - scipy
+  - streamlit
+  - nltk
+  - gensim
+  - wordcloud
+  - pillow
+  - tqdm
+  - umap-learn
+  - ipykernel
+  - pip
+  - pip:
+      - tensorflow==2.10.1
+      - tensorflow_hub
+      - transformers
+      - mlflow
+      - optuna

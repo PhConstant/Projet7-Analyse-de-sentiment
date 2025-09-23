@@ -1,0 +1,29 @@
+name: AI_env_P7
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy>=1.22.4
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - scipy
+  - nltk
+  - gensim
+  - wordcloud
+  - pillow
+  - tqdm
+  - umap-learn
+  - opencv
+  - cudatoolkit=11.8       
+  - cudnn=8.1              
+  - pip
+  - pip:
+      - tensorflow==2.10.1
+      - tensorflow_hub
+      - transformers
+      - torch
+      - mlflow
+      - optuna
