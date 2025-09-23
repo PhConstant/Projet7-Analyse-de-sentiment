@@ -1,13 +1,11 @@
 # API/app.py
 from fastapi import FastAPI
 from pydantic import BaseModel
-import mlflow.pyfunc
-import mlflow
+
 import pandas as pd
-from mlflow.tracking import MlflowClient
-from Source.preprocess_data import preprocess_text_simple
-from nltk.tokenize import TweetTokenizer, WordPunctTokenizer, RegexpTokenizer
-from nltk.stem import PorterStemmer, WordNetLemmatizer, LancasterStemmer
+from Source.preprocess_data import preprocess_data_embedding
+import tensorflow as tf
+import joblib
 import logging
 
 app = FastAPI(title="Air Paradis Sentiment API")
@@ -27,17 +25,10 @@ class FeedbackIn(BaseModel):
     right_answer: bool
 
 # Charger le modèle "Production" depuis le MLflow Model Registry (ou chemin local)
-import tensorflow as tf
-import joblib
+
 MODEL_PATH = "exp_models/Best_BiLSTM_model"
 model = tf.keras.models.load_model(MODEL_PATH)
 tokenizer = joblib.load("exp_models/bilstm_tokenizer.pkl")
-
-
-# client = MlflowClient(tracking_uri="http://localhost:8080")
-# registered_model_name = client.get_registered_model('log_regression_model_opt').name
-# MODEL_URI = f"models:/{registered_model_name}@champion"
-# model = mlflow.sklearn.load_model(MODEL_URI)
 
 
 
@@ -49,7 +40,8 @@ def predict(inp: TweetIn):
     # Prétraitement du texte d'entrée
     print("Text input raw :")
     print(inp.text)
-    text_df = pd.DataFrame(data=[inp.text], columns=['text'])
+    text_df = pd.Series(data=[inp.text], name='text')
+    print(text_df)
     text_clean = preprocess_data_embedding(X_raw=text_df, 
                                                         stem_lem_func=None,
                                                         tokenizer=tokenizer, 
@@ -57,7 +49,6 @@ def predict(inp: TweetIn):
                                                         min_count=1, # mincount = 1 car on est sur le jeu de validation
                                                         max_len = 50, 
                                                         num_words=30000)
-
     # text = preprocess_text_simple(
     #     text=inp.text, 
     #     tokenizer=TweetTokenizer().tokenize,
@@ -66,9 +57,9 @@ def predict(inp: TweetIn):
     
     print("Texte prétraité :", text_clean)
 
+    print(model.predict(text_clean).shape)
 
-
-    proba = float(model.predict(text_clean)[0][0])  # adapter selon wrapper
+    proba = float(model.predict(text_clean)[0][0])  
     print(f"¨Probablilité calculées {round(proba,5)}")
 
     return PredOut(positive_proba=proba, positive=proba>=0.5)

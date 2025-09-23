@@ -2,7 +2,6 @@
 # Source/preprocess_data.py
 # Fonctions de pré-traitement des données textuelles
 # Auteur : Philippe CONSTANT
-from sklearn.model_selection import train_test_split
 import re
 import html
 import pandas as pd
@@ -119,14 +118,14 @@ def remove_rare_words(tokens, word_counts, min_count):
 
 
 def preprocess_data_embedding(X_raw,
-                              stem_lem_func,
+                             stem_lem_func,
                               tokenizer = None, # Si il n'y a pas de tokenizer en entrée alors on l'entraine directement dans le prétraitement
                               stop_words = None, 
                               min_count = 2,
                               max_len = 10, 
                               num_words = 10000, # Utile si tokenizer est None
                               return_sentences = False
-                                  ):
+                                  ): 
     # Prétraitement du texte simple
     X_clean = X_raw.apply(clean_text)
 
@@ -155,7 +154,6 @@ def preprocess_data_embedding(X_raw,
 
 
 
-import numpy as np
 
 def build_embedding_matrix(tokenizer, embedding_model, latent_dim=100):
     """
