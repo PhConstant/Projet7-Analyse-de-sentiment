@@ -1,7 +1,7 @@
 # API/app.py
 from fastapi import FastAPI
 from pydantic import BaseModel
-
+import uvicorn
 import pandas as pd
 from Source.preprocess_data import preprocess_data_embedding
 import tensorflow as tf
@@ -57,7 +57,6 @@ def predict(inp: TweetIn):
     
     print("Texte prétraité :", text_clean)
 
-    print(model.predict(text_clean).shape)
 
     proba = float(model.predict(text_clean)[0][0])  
     print(f"¨Probablilité calculées {round(proba,5)}")
