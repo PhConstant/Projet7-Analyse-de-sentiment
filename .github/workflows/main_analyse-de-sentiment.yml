@@ -47,6 +47,7 @@ jobs:
           path: |
             .
             !venv/
+            !output.tar.gz
 
   deploy:
     runs-on: ubuntu-latest
