@@ -1,14 +1,17 @@
 # API/app.py
+
 from fastapi import FastAPI
 from pydantic import BaseModel
-import uvicorn
-import pandas as pd
+
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 import numpy as np
-from Source.preprocess_data import preprocess_data_embedding
 from transformers import AutoTokenizer
 import tensorflow as tf
 import logging
-import os
 
 app = FastAPI(title="Air Paradis Sentiment API")
 
