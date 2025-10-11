@@ -29,15 +29,17 @@ class FeedbackIn(BaseModel):
     user_feedback: str   # "Oui" ou "Non"
     right_answer: bool
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Chemin absolu du tokenizer
+TOKENIZER_PATH = os.path.join(BASE_DIR, "exp_models", "final_tokenizer")
 # Chargement du tokenizer HF
-TOKENIZER_PATH = os.path.join("exp_models","final_tokenizer")
 tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
 print(f"Loading tokenizer from {TOKENIZER_PATH}")
 MAX_LEN = 64
 THRESHOLD = 0.45034 # Seuil optimal après conversion tflite float16
 # Charger le modèle TFLite float16
-MODEL_PATH = os.path.join("exp_models","bert_model_f16.tflite")
+MODEL_PATH = os.path.join(BASE_DIR, "exp_models","bert_model_f16.tflite")
 print(f"Loading model from {MODEL_PATH}")
 interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
 print("Model loaded.")
