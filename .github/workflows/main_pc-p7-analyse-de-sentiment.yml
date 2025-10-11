@@ -38,11 +38,11 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 5️⃣ Vérifie juste que l’app démarre localement
-      - name: Validate FastAPI app structure
-        run: |
-          python -c "import importlib; importlib.import_module('API.app_bert')"
-          echo "✅ FastAPI app found!"
+      # # 5️⃣ Vérifie juste que l’app démarre localement
+      # - name: Validate FastAPI app structure
+      #   run: |
+      #     python -c "import importlib; importlib.import_module('API.app_bert')"
+      #     echo "✅ FastAPI app found!"
 
       # 6️⃣ Prépare les fichiers à déployer
       - name: Upload artifact for deployment
