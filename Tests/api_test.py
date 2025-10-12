@@ -6,8 +6,6 @@ from transformers import AutoTokenizer
 import numpy as np
 import os
 
-from concurrent.futures import interpreter
-
 
 
 
