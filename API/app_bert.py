@@ -12,6 +12,7 @@ import numpy as np
 from transformers import AutoTokenizer
 import tensorflow as tf
 import logging
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 app = FastAPI(title="Air Paradis Sentiment API")
 
@@ -54,9 +55,16 @@ print("Interpreter allocated.")
 
 
 
+# Configure OpenTelemetry to use Azure Monitor with the 
+# APPLICATIONINSIGHTS_CONNECTION_STRING environment variable.
+configure_azure_monitor(
+    connection_string="InstrumentationKey=bc6d51f2-9c60-4b69-891b-f66da44843d3;IngestionEndpoint=https://francecentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://francecentral.livediagnostics.monitor.azure.com/;ApplicationId=ec4b110b-8c98-43e6-a86f-2353d580a57c",
+    logger_name="sentiment_api_logger",  # Set the namespace for the logger in which you would like to collect telemetry for if you are collecting logging telemetry. This is imperative so you do not collect logging telemetry from the SDK itself.
+)
+logger = logging.getLogger("sentiment_api_logger")
+logger.setLevel(logging.INFO)
+logger.info("Application Insights logging initialized.")
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("sentiment_api")
 
 @app.post("/predict", response_model=PredOut)
 def predict(inp: TweetIn):
@@ -86,5 +94,4 @@ def feedback(data: FeedbackIn):
     logger.info(f"[FEEDBACK] Texte='{data.text}' | Pred={data.prediction} | "
                 f"User={data.user_feedback} | Right={data.right_answer}")
 
-    print(f"[FEEDBACK] Texte='{data.text}' | Pred={data.prediction} | User={data.user_feedback}")
     return {"status": "success", "message": "Feedback reçu"}
