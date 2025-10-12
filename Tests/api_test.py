@@ -24,6 +24,7 @@ class TestPredictEndpoint(unittest.TestCase):
         data = {"text": "I love to travel with Air Paradis !"}
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 200)
+        print("status code: OK")
 
         json_response = response.json()
         self.assertIn("positive_proba", json_response)
