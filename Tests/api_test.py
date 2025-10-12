@@ -6,6 +6,8 @@ from transformers import AutoTokenizer
 import numpy as np
 import os
 
+from concurrent.futures import interpreter
+
 
 
 
@@ -70,16 +72,22 @@ class TestModelComponents(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.__MAX_LEN__ = 64
         # Charger le tokenizer et le modèle une fois pour toutes les tests
         tokenizer_path = os.path.join("exp_models","Best_BERT_tokenizer")
         model_path = os.path.join("exp_models","Best_BERT_model2")
         cls.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-        cls.model = tf.saved_model.load(model_path)
-        cls.infer = cls.model.signatures["serving_default"]
+        cls.interpreter = tf.lite.Interpreter(model_path=model_path)
+
+        cls.input_details = cls.interpreter.get_input_details()
+        cls.output_details = cls.interpreter.get_output_details()
+        cls.interpreter.resize_tensor_input(cls.input_details[0]['index'], [1, cls.__MAX_LEN__])
+        cls.interpreter.resize_tensor_input(cls.input_details[1]['index'], [1, cls.__MAX_LEN__])
+        cls.interpreter.allocate_tensors()
 
     def test_tokenizer_output(self):
         text = "This statement is a test."
-        encoded = self.tokenizer(text, padding=True, truncation=True, return_tensors='tf')
+        encoded = self.tokenizer(text, padding="max_length", truncation=True, max_length=self.__MAX_LEN__, return_tensors='np')
         # Vérifier que les clés existent
         self.assertIn("input_ids", encoded)
         self.assertIn("attention_mask", encoded)
@@ -90,45 +98,52 @@ class TestModelComponents(unittest.TestCase):
 
     def test_inference_output(self):
         text = "This statement is a test."
-        encoded = self.tokenizer(text, padding=True, truncation=True, return_tensors='tf')
-        output = self.infer(
-            input_ids=encoded["input_ids"],
-            attention_mask=encoded["attention_mask"],
-            token_type_ids=encoded.get("token_type_ids", tf.zeros_like(encoded["input_ids"]))
-        )
-        # Supposons que la sortie s’appelle 'output_0' comme dans votre code
-        logits = output["output_0"].numpy()
+        encoded = self.tokenizer(text, padding="max_length", truncation=True, max_length=self.__MAX_LEN__, return_tensors='np')
+        encoded = {k: v.astype(np.int32) for k, v in encoded.items()} # On cast lkes inputs en int32 pour assurer la compatibilité tflite interpreter
+
+        self.interpreter.set_tensor(self.input_details[0]['index'], encoded['attention_mask'])
+        self.interpreter.set_tensor(self.input_details[1]['index'], encoded['input_ids'])
+
+        # Inference
+        self.interpreter.invoke()
+        output = self.interpreter.get_tensor(self.output_details[0]['index'])
+        logits = np.array(output[0])[0]
+        
         # Vérifier la forme (batch_size, 1)
-        self.assertEqual(logits.shape[0], 1)
-        self.assertEqual(len(logits.shape), 2)
-        self.assertEqual(logits.shape[1], 1)
-        # Vérifier que la sortie est un float valide (probabilité), par exemple entre 0 et 1 après sigmoïde
-        prob = logits[0][0]
-        self.assertIsInstance(prob, (float, np.floating))
-        self.assertGreaterEqual(prob, 0.0)
-        self.assertLessEqual(prob, 1.0)
+        self.assertIsInstance(logits, (float, np.floating))
+        self.assertGreaterEqual(logits, 0.0)
+        self.assertLessEqual(logits, 1.0)
 
 
 class TestModelModelSimpleCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Charger tokenizer et modèle une fois pour tous les tests
-        tokenizer_path = os.path.join("exp_models", "Best_BERT_tokenizer")
-        model_path = os.path.join("exp_models", "Best_BERT_model2")
+        cls.__MAX_LEN__ = 64
+        # Charger le tokenizer et le modèle une fois pour toutes les tests
+        tokenizer_path = os.path.join("exp_models","Best_BERT_tokenizer")
+        model_path = os.path.join("exp_models","Best_BERT_model2")
         cls.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-        cls.model = tf.saved_model.load(model_path)
-        cls.infer = cls.model.signatures["serving_default"]
+        cls.interpreter = tf.lite.Interpreter(model_path=model_path)
+
+        cls.input_details = cls.interpreter.get_input_details()
+        cls.output_details = cls.interpreter.get_output_details()
+        cls.interpreter.resize_tensor_input(cls.input_details[0]['index'], [1, cls.__MAX_LEN__])
+        cls.interpreter.resize_tensor_input(cls.input_details[1]['index'], [1, cls.__MAX_LEN__])
+        cls.interpreter.allocate_tensors()
 
     def predict_sentiment(self, text):
-        encoded = self.tokenizer(text, padding=True, truncation=True, return_tensors='tf')
-        output = self.infer(
-            input_ids=encoded["input_ids"],
-            attention_mask=encoded["attention_mask"],
-            token_type_ids=encoded.get("token_type_ids", tf.zeros_like(encoded["input_ids"]))
-        )
-        proba = output["output_0"].numpy()[0][0]
-        return proba >= 0.5  # booléen selon seuil 0.5
+        encoded = self.tokenizer(text, padding="max_length", truncation=True, max_length=self.__MAX_LEN__, return_tensors='np')
+        encoded = {k: v.astype(np.int32) for k, v in encoded.items()} # On cast lkes inputs en int32 pour assurer la compatibilité tflite interpreter
+
+        self.interpreter.set_tensor(self.input_details[0]['index'], encoded['attention_mask'])
+        self.interpreter.set_tensor(self.input_details[1]['index'], encoded['input_ids'])
+
+        # Inference
+        self.interpreter.invoke()
+        output = self.interpreter.get_tensor(self.output_details[0]['index'])
+        logits = np.array(output[0])[0]
+        return logits >= 0.5  # booléen selon seuil 0.5
 
     def test_simple_sentiments(self):
         exemples = [
