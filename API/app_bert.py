@@ -96,8 +96,8 @@ def feedback(data: FeedbackIn):
                 f"User={data.user_feedback} | Right={data.right_answer}")
     if data.right_answer==False:
         
-        logger.warning(
-            "Mauvaise prédiction",
+        logger.info(
+            "[WARNING] Mauvaise prédiction",
             extra={
                 "custom_dimensions": {
                     "text": data.text,
