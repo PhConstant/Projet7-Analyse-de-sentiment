@@ -94,8 +94,8 @@ def feedback(data: FeedbackIn):
     logger.setLevel(logging.INFO)
     logger.info(f"[FEEDBACK] Texte='{data.text}' | Pred={data.prediction} | "
                 f"User={data.user_feedback} | Right={data.right_answer}")
-    if not data.right_answer:
-        logger.setLevel(logging.WARNING)
+    if data.right_answer==False:
+        
         logger.warning(
             "Mauvaise prédiction",
             extra={
