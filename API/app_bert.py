@@ -91,7 +91,19 @@ def predict(inp: TweetIn):
 @app.post("/feedback")
 def feedback(data: FeedbackIn):
     # Logger, sauvegarder en base ou fichier
+    logger.setLevel(logging.INFO)
     logger.info(f"[FEEDBACK] Texte='{data.text}' | Pred={data.prediction} | "
                 f"User={data.user_feedback} | Right={data.right_answer}")
-
+    if not data.right_answer:
+        logger.setLevel(logging.WARNING)
+        logger.warning(
+            "Mauvaise prédiction",
+            extra={
+                "custom_dimensions": {
+                    "text": data.text,
+                    "predicted": data.prediction,
+                    "user_feedback": data.user_feedback,
+                }
+            },
+        )
     return {"status": "success", "message": "Feedback reçu"}
