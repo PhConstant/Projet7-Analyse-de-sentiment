@@ -72,8 +72,8 @@ class TestModelComponents(unittest.TestCase):
     def setUpClass(cls):
         cls.__MAX_LEN__ = 64
         # Charger le tokenizer et le modèle une fois pour toutes les tests
-        tokenizer_path = os.path.join("exp_models","Best_BERT_tokenizer")
-        model_path = os.path.join("exp_models","Best_BERT_model2")
+        tokenizer_path = os.path.join("exp_models","final_tokenizer")
+        model_path = os.path.join("exp_models","bert_model_f16.tflite")
         cls.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
         cls.interpreter = tf.lite.Interpreter(model_path=model_path)
 
@@ -119,8 +119,8 @@ class TestModelModelSimpleCase(unittest.TestCase):
     def setUpClass(cls):
         cls.__MAX_LEN__ = 64
         # Charger le tokenizer et le modèle une fois pour toutes les tests
-        tokenizer_path = os.path.join("exp_models","Best_BERT_tokenizer")
-        model_path = os.path.join("exp_models","Best_BERT_model2")
+        tokenizer_path = os.path.join("exp_models","final_tokenizer")
+        model_path = os.path.join("exp_models","bert_model_f16.tflite")
         cls.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
         cls.interpreter = tf.lite.Interpreter(model_path=model_path)
 
