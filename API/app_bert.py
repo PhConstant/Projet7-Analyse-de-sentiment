@@ -37,7 +37,7 @@ TOKENIZER_PATH = os.path.join(BASE_DIR, "exp_models", "final_tokenizer")
 tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
 print(f"Loading tokenizer from {TOKENIZER_PATH}")
 MAX_LEN = 64
-THRESHOLD = 0.45034 # Seuil optimal après conversion tflite float16
+THRESHOLD = 0.45279  # Seuil optimal après conversion tflite float16
 # Charger le modèle TFLite float16
 MODEL_PATH = os.path.join(BASE_DIR, "exp_models","bert_model_f16.tflite")
 print(f"Loading model from {MODEL_PATH}")
@@ -65,6 +65,7 @@ def predict(inp: TweetIn):
     print(inp.text)
 
     inputs = tokenizer(inp.text, return_tensors="np", padding='max_length', max_length=MAX_LEN, truncation=True)
+    inputs = {k: v.astype(np.int32) for k, v in inputs.items()} # On cast lkes inputs en int32 pour assurer la compatibilité tflite interpreter
 
     interpreter.set_tensor(input_details[0]['index'], inputs['attention_mask'])
     interpreter.set_tensor(input_details[1]['index'], inputs['input_ids'])
