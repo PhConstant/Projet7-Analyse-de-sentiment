@@ -18,7 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+        with: 
+          lfs: true  # Sinon on ne peut pas récupérer les gros fichiers (modèle tflite)
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
