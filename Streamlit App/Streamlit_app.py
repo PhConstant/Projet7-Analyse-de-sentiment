@@ -4,8 +4,8 @@ import requests
 # -----------------------------
 # Config API
 # -----------------------------
-API_URL = "http://127.0.0.1:8000/predict"
-FEEDBACK_URL = "http://127.0.0.1:8000/feedback"
+API_URL = "https://pc-p7-analyse-de-sentiment-fxecf4frfabsfxbq.francecentral-01.azurewebsites.net/predict"
+FEEDBACK_URL = "https://pc-p7-analyse-de-sentiment-fxecf4frfabsfxbq.francecentral-01.azurewebsites.net/feedback"
 
 st.set_page_config(page_title="Air Paradis - Sentiment Analysis", layout="centered")
 
