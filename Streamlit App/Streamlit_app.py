@@ -73,7 +73,7 @@ if st.session_state["result"]:
         )
 
         if st.button("Envoyer mon feedback"):
-            right_answer = positive if feedback_choice == "Oui" else not positive
+            right_answer = True if feedback_choice == "Oui" else False
             fb_payload = {
                 "text": st.session_state["tweet"],
                 "prediction": positive,
@@ -86,6 +86,7 @@ if st.session_state["result"]:
                 fb_response.raise_for_status()
 
                 # Affichage du message de succès
+                
                 st.success("Feedback envoyé à l'API", icon="✅")
                 st.session_state["feedback_sent"] = True
 
