@@ -279,11 +279,11 @@ logger.info("Application Insights logging initialized.")
 
 ## Création d'alertes 
 
-Les éléments loggés peuvent être consultés sur le portail Azure et dess règles d'alertes peuvent être créées à partir des données monitorées. Cela se fait en trois étapes : 
+Les éléments loggés peuvent être consultés sur le portail Azure permettent de définir des règles d'alertes. Cela se fait en trois étapes : 
 
 - Requète sur les logs
 - Création de condition d'alerte basée sur les résultats de requètes
-- Automatisation d'une action au déclenchement de l'alerte (envoi e-mail, SMS etc...)
+- Automatisation d'action au déclenchement de l'alerte (envoi e-mail, SMS etc...)
 
 
 <figure style="text-align: center;">
