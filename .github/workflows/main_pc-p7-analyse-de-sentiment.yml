@@ -5,7 +5,7 @@
 name: Build and deploy Python app to Azure Web App - pc-p7-analyse-de-sentiment
 
 on:
-  workflow_dispatch:
+  push:
     branches:
       - main
     paths-ignore:
@@ -14,7 +14,9 @@ on:
       - 'Notebooks/**'
       - 'final_models/**'
       - 'Streamlit App/**'
+  worklflow_dispatch:
 
+    
 jobs:
   build:
     runs-on: ubuntu-latest
