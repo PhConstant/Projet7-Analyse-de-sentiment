@@ -6,6 +6,7 @@ name: Build and deploy Python app to Azure Web App - pc-p7-analyse-de-sentiment
 
 on:
   workflow_dispatch:
+  push:
     branches:
       - main
 
