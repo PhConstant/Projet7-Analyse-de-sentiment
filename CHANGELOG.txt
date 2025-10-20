@@ -1,0 +1,62 @@
+## 2025-09-23
+- Add or update the Azure App Service build and deployment workflow config
+- Adding Bidirectionnal-LSTM model
+- Adding uvicorn do requirements
+- API update for BiLSTM model
+- Change in requirements
+- Initial commit clean
+- Modification of workflow
+- Reduce requirements to minimum
+- Remove local conda references
+- Req modification for fastapi
+- Requirement reduced
+- Update workflow 2
+- Update workflow 3
+- updating API file
+
+## 2025-09-27
+- API.app update
+- move reqs to API
+- Notebook folder added
+- Workflow update 1
+- Workflow update 2
+- Workflow update 3
+
+## 2025-10-01
+- Update API with BERT model
+
+## 2025-10-11
+- Add or update the Azure App Service build and deployment workflow config
+- adding large models with LFS
+- Remove the Azure App Service build and deployment workflow config
+- Update API files with tflite BERT model
+- Update Requirements
+- Update Requirementsand API
+
+## 2025-10-12
+- Add or update the Azure App Service build and deployment workflow config
+- Add tests to build
+- Adding logging for application insights in azure
+- Fix build test phase in build
+- Fix tokenizer path for API_test
+- Force cast on int into int32 for compatibility with tflite
+- Optimal workflow update with cache
+- Reduce size of the models
+- Remove the Azure App Service build and deployment workflow config
+- Update requirements for compatibility
+- Update Tests to adapt to tflite model
+- Update Tests to adapt to tflite model 3
+- Update workflow file
+
+## 2025-10-13
+- Adding logging for application insights in azure
+- Connect Streamlit app to cloud API
+- Update README.md
+- Update workflow for manual run only
+
+## 2025-10-19
+- Update Blog Post and clean repo
+
+## 2025-10-20
+- Update Blogpost and add .pdf
+- Update final models and workflow
