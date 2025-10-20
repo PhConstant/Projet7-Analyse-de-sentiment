@@ -5,17 +5,9 @@
 name: Build and deploy Python app to Azure Web App - pc-p7-analyse-de-sentiment
 
 on:
-  push:
+  workflow_dispatch:
     branches:
       - main
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'README.md'
-      - 'Notebooks/**'
-      - 'final_models/**'
-      - 'Streamlit App/**'
-  workflow_dispatch:
-
 
 jobs:
   build:
@@ -56,8 +48,12 @@ jobs:
         with:
           name: python-app
           path: |
-            .
-            !antenv/
+            '**'            
+            '!antenv/**'
+            '!README.md'
+            '!Notebooks/**'
+            '!final_models/**'
+            '!Streamlit App/**'
 
       # If you prefer to disable the Oryx build process during deployment, follow these steps:
       # 1. Remove the SCM_DO_BUILD_DURING_DEPLOYMENT app setting from your Azure App Service Environment variables.
